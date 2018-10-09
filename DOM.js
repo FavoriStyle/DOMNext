@@ -78,7 +78,7 @@ class ParentList extends Array{
 function __respawnGenerator(_this, to){
     privateProp.set({ context: _this, name: '__respawnGenerator', value: true });
     if(to) clearTimeout(to);
-    if(React) var attachedComponent = privateProp.get({ context: _this, name: 'reactComponent' });
+    var attachedComponent = React ? privateProp.get({ context: _this, name: 'reactComponent' }) : false;
     if(attachedComponent) to = setTimeout(() => attachedComponent.forceUpdate(), 0)
     _this.parents.forEach(__respawnGenerator, to)
 }
