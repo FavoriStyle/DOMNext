@@ -1,4 +1,10 @@
 {
-    "main": "index.ts",
-    "typings": "index.d.ts"
+    "main": "index.js",
+    "typings": "index.d.ts",
+    "license": "MIT",
+    "author": {
+        "name": "KaMeHb-UA",
+        "email": "marlock@etlgr.com",
+        "url": "https://t.me/KaMeHb_UA"
+    }
 }

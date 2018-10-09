@@ -1,11 +1,11 @@
-import React from 'react';
+var React;
+try{ React = require('react') } catch(e){}
 const removeGenerator = Symbol('[[removeGenerator]]');
 const voidElements = [
     'area',
     'base',
     'br',
     'col',
-    'command',
     'embed',
     'hr',
     'img',
@@ -15,7 +15,6 @@ const voidElements = [
     'meta',
     'param',
     'source',
-    'track',
     'wbr',
 ];
 const privateProp = (() => {
@@ -79,7 +78,7 @@ class ParentList extends Array{
 function __respawnGenerator(_this, to){
     privateProp.set({ context: _this, name: '__respawnGenerator', value: true });
     if(to) clearTimeout(to);
-    const attachedComponent = privateProp.get({ context: _this, name: 'reactComponent' });
+    if(React) var attachedComponent = privateProp.get({ context: _this, name: 'reactComponent' });
     if(attachedComponent) to = setTimeout(() => attachedComponent.forceUpdate(), 0)
     _this.parents.forEach(__respawnGenerator, to)
 }
@@ -107,7 +106,7 @@ function elementConstructorInterface(_this){
             }
         })
     });
-    Object.defineProperty(_this, 'reactElement', {
+    if(React) Object.defineProperty(_this, 'reactElement', {
         configurable: false,
         enumerable: false,
         get(){
@@ -215,10 +214,10 @@ class Element{
         }
         __respawnGenerator(this)
     }
-    attachReactComponent(component){
-        privateProp.set({ context: this, name: 'reactComponent', value: component });
-    }
 }
+if(React) Element.prototype.attachReactComponent = function attachReactComponent(component){
+    privateProp.set({ context: this, name: 'reactComponent', value: component })
+};
 VoidElement.prototype = Object.create(Element.prototype);
 VoidElement.prototype.append = function append(child){
     throw new TypeError('Cannot assign child to the void (aka singleton) element')
@@ -251,4 +250,4 @@ TextNode.prototype[Symbol.toPrimitive] = function(){
         name: '_text',
     })
 };
-export default Element
+module.exports = Element
