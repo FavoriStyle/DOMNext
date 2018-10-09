@@ -1,5 +1,5 @@
 /// <reference path="index.d.ts"/>
 /**
- * @type {typeof _}
+ * @type {typeof ElementClass}
  */
 module.exports = require('./DOM');

@@ -1,4 +1,4 @@
-declare const _ = (() => {
+declare const ElementClass = (() => {
     class ClassList extends Array<string>{
         [Symbol.toPrimitive](): string
     }
@@ -42,7 +42,7 @@ declare const _ = (() => {
         childs: undefined
         props: undefined
     }
-    var _: {
+    var ElementClass: {
         new(name: '#text', text?: string): TextNode
         new(name:
             ( 'area'
@@ -162,5 +162,5 @@ declare const _ = (() => {
         ): Element
         new(name: string): Element
     };
-    return _
+    return ElementClass
 })();
