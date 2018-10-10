@@ -1,4 +1,5 @@
 {
+    "name": "dom-next",
     "main": "index.js",
     "typings": "index.d.ts",
     "license": "MIT",
