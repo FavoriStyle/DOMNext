@@ -1,4 +1,4 @@
-declare const ElementClass = (() => {
+declare var ElementClass = (() => {
     class ClassList extends Array<string>{
         [Symbol.toPrimitive](): string
     }
