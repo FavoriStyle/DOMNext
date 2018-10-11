@@ -1,15 +1,14 @@
 {
     "name": "dom-next",
     "main": "index.js",
-    "typings": "index.d.ts",
     "license": "MIT",
     "author": {
         "name": "KaMeHb-UA",
         "email": "marlock@etlgr.com",
         "url": "https://t.me/KaMeHb_UA"
     },
-    "version": "0.5.2",
-    "dependencies": {
+    "version": "0.5.3",
+    "devDependencies": {
         "@types/dom-next": "https://github.com/FavoriStyle/DOMNext.git#types"
     }
 }

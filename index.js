@@ -1,6 +1,7 @@
 var React;
 try{ React = require('react') } catch(e){}
 const removeGenerator = Symbol('[[removeGenerator]]');
+const _internalCheck = Symbol('[[InternalChecker]]');
 const voidElements = [
     'area',
     'base',
@@ -150,6 +151,7 @@ function generateReactElement(_this){
 }
 
 function VoidElement(name){
+    if (arguments[1] !== _internalCheck) throw new TypeError('Cannot create VoidElement directly. Use Element instead');
     privateProp.set({
         context: this,
         name: '_name',
@@ -159,6 +161,7 @@ function VoidElement(name){
     elementConstructorInterface(this)
 }
 function TextNode(text){
+    if (arguments[1] !== _internalCheck) throw new TypeError('Cannot create TextNode directly. Use Element instead');
     this.set(text);
     Object.defineProperty(this, 'parents', {
         configurable: false,
@@ -169,8 +172,8 @@ function TextNode(text){
 }
 class Element{
     constructor(name, text){
-        if(name == '#text') return new TextNode(text);
-        if(voidElements.indexOf(name) != -1) return new VoidElement(name);
+        if(name == '#text') return new TextNode(text, _internalCheck);
+        if(voidElements.indexOf(name) != -1) return new VoidElement(name, _internalCheck);
         privateProp.set({
             context: this,
             name: '_name',
