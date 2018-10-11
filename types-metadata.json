@@ -1,0 +1,22 @@
+{
+    "authors": "KaMeHb-UA <marlock@etlgr.com> (https://t.me/KaMeHb_UA)",
+    "definitionFilename": "index.d.ts",
+    "libraryDependencies": [],
+    "moduleDependencies": [],
+    "libraryMajorVersion": "0",
+    "libraryMinorVersion": "5",
+    "libraryName": "dom-next 0.5.2",
+    "typingsPackageName": "dom-next",
+    "projectName": "https://github.com/FavoriStyle/DOMNext",
+    "sourceRepoURL": "https://github.com/FavoriStyle/DOMNext",
+    "sourceBranch": "types",
+    "kind": "ProperModule",
+    "globals": [],
+    "declaredModules": [
+        "dom-next"
+    ],
+    "files": [
+        "index.d.ts"
+    ],
+    "hasPackageJson": false
+}
