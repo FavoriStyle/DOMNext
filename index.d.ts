@@ -170,3 +170,4 @@ declare var ElementClass: {
     ): Elеmеnt
     new(name: string): Elеmеnt
 }
+export default ElementClass
