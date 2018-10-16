@@ -53,7 +53,8 @@ propsRestrictedSymbols.assert = (i, str) => {
     for(var j = 0; j < str.length; j++){
         if(propsRestrictedSymbols[i].indexOf(str[j]) != -1) throw new SyntaxError('String contains an invalid character')
     }
-}
+};
+const __additionalConstructorEvents = [];
 function __buildProps(_this){
     var res = '';
     for(var i in _this.props) res += ` ${i}=${_this.props[i]}`;
@@ -125,6 +126,7 @@ function elementConstructorInterface(_this){
         writable: false,
         value: new ParentList
     });
+    __additionalConstructorEvents.forEach(cb => cb(_this));
     __respawnGenerator(_this)
 }
 
@@ -150,17 +152,17 @@ function getStyleDecl(styles){
     return res
 }
 
-function __processProps(props){
-    for(var i in props){
+function __processProps(_this){
+    for(var i in _this.props){
         if(i == 'class'){
-            props['className'] = `${props[i]}`;
-            delete props[i]
+            _this.props['className'] = `${_this.props[i]}`;
+            delete _this.props[i]
         }
         if(i == 'style'){
-            props.style = getStyleDecl(props.style)
+            _this.props.style = getStyleDecl(_this.props.style)
         }
     }
-    return props
+    return _this.props
 }
 
 function generateReactElement(_this){
@@ -172,7 +174,7 @@ function generateReactElement(_this){
     return React.createElement(privateProp.get({
         context: _this,
         name: '_name',
-    }), __processProps(_this.props), ...childs)
+    }), __processProps(_this), ...childs)
 }
 
 function VoidElement(name){
@@ -243,9 +245,32 @@ class Element{
         __respawnGenerator(this)
     }
 }
-if(React) Element.prototype.attachReactComponent = function attachReactComponent(component){
-    privateProp.set({ context: this, name: 'reactComponent', value: component })
-};
+if(React) (() => {
+    Element.prototype.attachReactComponent = function attachReactComponent(component){
+        var mountedCBs = privateProp.get({ context: this, name: 'mountedCBs' });
+        privateProp.set({ context: this, name: 'reactComponent', value: component });
+        component.componentDidMount = function componentDidMount(){
+            mountedCBs.forEach(cb => cb());
+            privateProp.set({ context: this, name: '__mounted', value: true });
+        }
+    };
+    Element.prototype.mounted = function mounted(cb){
+        if(privateProp.get({ context: this, name: '__mounted' })) cb(); else privateProp.get({ context: this, name: 'mountedCBs' }).push(cb)
+    };
+    Element.prototype.click = function click(cb){
+        var clickCBs = privateProp.get({ context: this, name: 'clickCBs' });
+        clickCBs.push(cb)
+    };
+    __additionalConstructorEvents.push(_this => {
+        var clickCBs = [];
+        privateProp.set({ context: _this, name: 'mountedCBs', value: [] });
+        privateProp.set({ context: _this, name: 'clickCBs', value: clickCBs });
+        privateProp.set({ context: _this, name: '__mounted', value: false });
+        _this.props.onClick = function onClick(e){
+            clickCBs.forEach(cb => cb(e))
+        }
+    })
+})();
 VoidElement.prototype = Object.create(Element.prototype);
 VoidElement.prototype.append = function append(child){
     throw new TypeError('Cannot assign child to the void (aka singleton) element')
