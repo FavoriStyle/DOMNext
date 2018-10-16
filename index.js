@@ -128,11 +128,36 @@ function elementConstructorInterface(_this){
     __respawnGenerator(_this)
 }
 
+function getStyleDecl(styles){
+    var element = document.createElement('style');
+    element.innerHTML = `.i{${styles}}`;
+    document.head.appendChild(element);
+    var style = element.sheet.cssRules[0].style,
+        res = {};
+    for(var i = 0; i < style.length; i++){
+        let index = '', nextBig = false;
+        for(let j = 0; j < style[i].length; j++){
+            if(nextBig){
+                index += style[i][j].toUpperCase();
+                nextBig = false
+            } else if(style[i][j] == '-'){
+                nextBig = true;
+            } else index += style[i][j]
+        }
+        res[index] = style[style[i]]
+    }
+    document.head.removeChild(element)
+    return res
+}
+
 function __processProps(props){
     for(var i in props){
         if(i == 'class'){
             props['className'] = `${props[i]}`;
             delete props[i]
+        }
+        if(i == 'style'){
+            props.style = getStyleDecl(props.style)
         }
     }
     return props
