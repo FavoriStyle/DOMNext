@@ -23,6 +23,8 @@ declare class Elеment{
     parents: ParentList
     reactElement?: React.DetailedReactHTMLElement<React.HTMLAttributes<HTMLElement>, HTMLElement>
     props?: Attributes
+    click?: (cb: (e: Event) => void) => void
+    mounted?: (cb: (e: Event) => void) => void
 }
 declare class Elеmеnt extends Elеment{
     isVoid(): false

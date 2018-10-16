@@ -1,7 +1,7 @@
 {
     "name": "@types/dom-next",
-    "version": "0.5.4",
-    "description": "TypeScript definitions for dom-next 0.5.4",
+    "version": "0.5.5",
+    "description": "TypeScript definitions for dom-next 0.5.5",
     "license": "MIT",
     "author": "KaMeHb-UA <marlock@etlgr.com> (https://t.me/KaMeHb_UA)",
     "main": "",
