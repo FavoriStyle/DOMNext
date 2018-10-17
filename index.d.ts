@@ -1,7 +1,14 @@
 interface Attributes{
     [key: string]: string
 }
-declare class ClassList extends Array<string>{
+Array.prototype.indexOf
+declare class ClassList{
+    indexOf(searchElement: string, fromIndex?: number): number
+    add(className: string): this
+    push(className: string): this
+    del(className: string): this
+    rem(className: string): this
+    remove(className: string): this
     [Symbol.toPrimitive](): string
 }
 declare class ChildList extends Array<Elеment>{
