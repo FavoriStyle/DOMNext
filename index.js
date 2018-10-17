@@ -18,6 +18,7 @@ const voidElements = [
     'source',
     'wbr',
 ];
+
 const privateProp = (() => {
     var map = new Map();
     function isPrimitive(test){
@@ -40,6 +41,7 @@ const privateProp = (() => {
         }
     }
 })();
+
 const propsRestrictedSymbols = [
     // attribute names
     /"= /
@@ -49,28 +51,58 @@ const propsRestrictedSymbols = [
     /"/
     .toString().slice(1, -1)
 ];
+
 propsRestrictedSymbols.assert = (i, str) => {
     for(var j = 0; j < str.length; j++){
         if(propsRestrictedSymbols[i].indexOf(str[j]) != -1) throw new SyntaxError('String contains an invalid character')
     }
 };
+
 const __additionalConstructorEvents = [];
+
 function __buildProps(_this){
     var res = '';
     for(var i in _this.props) res += ` ${i}=${_this.props[i]}`;
     return res
 }
-class ClassList extends Array{
+
+class ClassList{
+    constructor(classListUpdateCB){
+        Object.defineProperty(this, 'length', {
+            value: 0,
+            enumerable: false,
+            configurable: false,
+            writable: true
+        });
+        privateProp.set({ context: this, name: 'classListUpdateCB', value: classListUpdateCB, const: true });
+    }
+    add(className){
+        Array.prototype.push.call(this, className);
+        privateProp.get({ context: this, name: 'classListUpdateCB' })(this)
+    }
+    del(className){
+        var i = this.indexOf(className);
+        if (i > -1){
+            Array.prototype.splice.call(this, i, 1);
+            privateProp.get({ context: this, name: 'classListUpdateCB' })(this)
+        }
+    }
     [Symbol.toPrimitive](){
-        return this.join(' ')
+        return Array.prototype.join.call(this, ' ')
     }
 }
+ClassList.prototype.indexOf = Array.prototype.indexOf;
+ClassList.prototype.push = ClassList.prototype.add;
+ClassList.prototype.rem = ClassList.prototype.del;
+ClassList.prototype.remove = ClassList.prototype.del;
+
 class ChildList extends Array{
     push(child){
         if(!(child instanceof Element)) throw new TypeError('Child is not an instance of Element');
         return this.length
     }
 }
+
 class ParentList extends Array{
     push(parent){
         throw new TypeError('Cannot assign new parent directly');
@@ -90,7 +122,11 @@ function elementConstructorInterface(_this){
         configurable: false,
         enumerable: false,
         writable: false,
-        value: new ClassList
+        value: new ClassList(_thisList => {
+            console.log('Class updates');
+            _this.props.class = `${_thisList}`;
+            __respawnGenerator(_this)
+        })
     });
     Object.defineProperty(_this, 'props', {
         configurable: false,
@@ -129,27 +165,26 @@ function elementConstructorInterface(_this){
     __additionalConstructorEvents.forEach(cb => cb(_this));
     __respawnGenerator(_this)
 }
-
-function getStyleDecl(styles){
-    var element = document.createElement('style');
-    element.innerHTML = `.i{${styles}}`;
-    document.head.appendChild(element);
-    var style = element.sheet.cssRules[0].style,
-        res = {};
-    for(var i = 0; i < style.length; i++){
-        let index = '', nextBig = false;
-        for(let j = 0; j < style[i].length; j++){
-            if(nextBig){
-                index += style[i][j].toUpperCase();
-                nextBig = false
-            } else if(style[i][j] == '-'){
-                nextBig = true;
-            } else index += style[i][j]
+class StyleDecl{
+    constructor(styles){
+        var element = document.createElement('style');
+        element.innerHTML = `.i{${styles}}`;
+        document.head.appendChild(element);
+        var style = element.sheet.cssRules[0].style;
+        for(var i = 0; i < style.length; i++){
+            let index = '', nextBig = false;
+            for(let j = 0; j < style[i].length; j++){
+                if(nextBig){
+                    index += style[i][j].toUpperCase();
+                    nextBig = false
+                } else if(style[i][j] == '-'){
+                    nextBig = true;
+                } else index += style[i][j]
+            }
+            this[index] = style[style[i]]
         }
-        res[index] = style[style[i]]
+        document.head.removeChild(element)
     }
-    document.head.removeChild(element)
-    return res
 }
 
 function __processProps(_this){
@@ -158,9 +193,7 @@ function __processProps(_this){
             _this.props['className'] = `${_this.props[i]}`;
             delete _this.props[i]
         }
-        if(i == 'style'){
-            _this.props.style = getStyleDecl(_this.props.style)
-        }
+        if(i == 'style' && !(_this.props.style instanceof StyleDecl)) _this.props.style = new StyleDecl(_this.props.style)
     }
     return _this.props
 }
@@ -187,6 +220,7 @@ function VoidElement(name){
     });
     elementConstructorInterface(this)
 }
+
 function TextNode(text){
     if (arguments[1] !== _internalCheck) throw new TypeError('Cannot create TextNode directly. Use Element instead');
     this.set(text);
@@ -197,6 +231,7 @@ function TextNode(text){
         value: new ParentList
     })
 }
+
 class Element{
     constructor(name, text){
         if(name == '#text') return new TextNode(text, _internalCheck);

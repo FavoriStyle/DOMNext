@@ -7,7 +7,7 @@
         "email": "marlock@etlgr.com",
         "url": "https://t.me/KaMeHb_UA"
     },
-    "version": "0.5.5",
+    "version": "0.5.6",
     "devDependencies": {
         "@types/dom-next": "https://github.com/FavoriStyle/DOMNext.git#types"
     }
