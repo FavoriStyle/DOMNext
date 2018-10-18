@@ -123,7 +123,6 @@ function elementConstructorInterface(_this){
         enumerable: false,
         writable: false,
         value: new ClassList(_thisList => {
-            console.log('Class updates');
             _this.props.class = `${_thisList}`;
             __respawnGenerator(_this)
         })
