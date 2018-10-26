@@ -200,7 +200,7 @@ function __processProps(_this){
 function generateReactElement(_this){
     if(_this.isText()) return _this + '';
     var childs = [];
-    _this.childs.forEach(child => {
+    (_this.childs || []).forEach(child => {
         childs.push(generateReactElement(child))
     });
     return React.createElement(privateProp.get({
