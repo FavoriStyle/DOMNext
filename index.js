@@ -192,6 +192,10 @@ function __processProps(_this){
             _this.props['className'] = `${_this.props[i]}`;
             delete _this.props[i]
         }
+        if(i == 'for'){
+            _this.props['htmlFor'] = `${_this.props[i]}`;
+            delete _this.props[i]
+        }
         if(i == 'style' && !(_this.props.style instanceof StyleDecl)) _this.props.style = new StyleDecl(_this.props.style)
     }
     return _this.props
